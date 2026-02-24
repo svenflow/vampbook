@@ -40,6 +40,7 @@ export default function SongDetailScreen() {
       <Stack.Screen
         options={{
           title: song.title,
+          headerBackTitle: 'Back',
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.tint,
           headerTitleStyle: { color: colors.text, fontWeight: '600' },
