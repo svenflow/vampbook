@@ -1,0 +1,216 @@
+[
+  {
+    "song": "Take Five - Paul Desmond",
+    "success": true,
+    "data": {
+      "description": "\"Take Five\" is a jazz composition written by Paul Desmond and recorded by the Dave Brubeck Quartet for their 1959 album Time Out. Notable for its unusual 5/4 time signature, it became the biggest-selling jazz single of all time and was inducted into the Grammy Hall of Fame in 1996. The piece was inspired by the quartet's State Department tour of Eurasia and drummer Joe Morello's fondness for soloing in 5/4 time.",
+      "related_songs": [
+        "Blue Rondo \u00e0 la Turk",
+        "Mission: Impossible Theme",
+        "Unsquare Dance"
+      ],
+      "tags": [
+        "cool jazz",
+        "west coast jazz",
+        "1950s",
+        "odd time signature",
+        "instrumental"
+      ]
+    },
+    "elapsed": 21.002917766571045,
+    "stdout_size": 636
+  },
+  {
+    "song": "Autumn Leaves - Joseph Kosma",
+    "success": true,
+    "data": {
+      "description": "\"Autumn Leaves\" is a popular music standard composed by Joseph Kosma in 1945 with original French lyrics by Jacques Pr\u00e9vert (as \"Les Feuilles mortes\") and later English lyrics by Johnny Mercer. It became one of the most recorded jazz standards of all time, popularized by artists like Nat King Cole, Miles Davis, Bill Evans, and Cannonball Adderley. The song's chord progression (a circle-of-fifths ii-V-I pattern in major and relative minor) makes it a foundational piece for jazz education and improvisation.",
+      "related_songs": [
+        "All The Things You Are",
+        "My Funny Valentine",
+        "Blue In Green"
+      ],
+      "tags": [
+        "jazz standard",
+        "ballad",
+        "1940s",
+        "Great American Songbook",
+        "cool jazz",
+        "vocal jazz"
+      ]
+    },
+    "elapsed": 7.499286890029907,
+    "stdout_size": 728
+  },
+  {
+    "song": "All The Things You Are - Jerome Kern",
+    "success": true,
+    "data": {
+      "description": "\"All The Things You Are\" is a jazz standard composed by Jerome Kern with lyrics by Oscar Hammerstein II, written for the 1939 Broadway musical \"Very Warm for May.\" Its sophisticated harmonic structure\u2014moving through multiple key centers\u2014made it a favorite vehicle for improvisation among bebop musicians like Charlie Parker and has kept it one of the most performed and recorded standards in the jazz repertoire.",
+      "related_songs": [
+        "Cherokee",
+        "Body and Soul",
+        "How High the Moon"
+      ],
+      "tags": [
+        "jazz standard",
+        "bebop",
+        "Great American Songbook",
+        "1930s",
+        "Broadway"
+      ]
+    },
+    "elapsed": 6.0635082721710205,
+    "stdout_size": 599
+  },
+  {
+    "song": "Blue Bossa - Kenny Dorham",
+    "success": true,
+    "data": {
+      "description": "\"Blue Bossa\" is a jazz standard composed by trumpeter Kenny Dorham, first recorded on Joe Henderson's 1963 album *Page One* for Blue Note Records. It is one of the earliest and most well-known examples of bossa nova influence in jazz, blending a Latin bossa nova rhythm with bebop harmony, and has become one of the most commonly played standards at jam sessions worldwide.",
+      "related_songs": [
+        "Recorda Me",
+        "No More Blues (Chega de Saudade)",
+        "Black Orpheus (Manha de Carnaval)"
+      ],
+      "tags": [
+        "bossa nova",
+        "latin jazz",
+        "hard bop",
+        "1960s",
+        "blue note",
+        "jam session standard"
+      ]
+    },
+    "elapsed": 7.34962010383606,
+    "stdout_size": 607
+  },
+  {
+    "song": "Summertime - George Gershwin",
+    "success": true,
+    "data": {
+      "description": "\"Summertime\" is an aria composed by George Gershwin for the 1935 opera Porgy and Bess, with lyrics by DuBose Heyward. It has become one of the most recorded songs in history, with thousands of versions spanning jazz, blues, rock, and pop. Its haunting melody and simple harmonic structure have made it a foundational jazz standard, frequently used as a vehicle for improvisation.",
+      "related_songs": [
+        "My Funny Valentine",
+        "It Ain't Necessarily So",
+        "A Night in Tunisia"
+      ],
+      "tags": [
+        "jazz standard",
+        "ballad",
+        "1930s",
+        "vocal jazz",
+        "blues"
+      ]
+    },
+    "elapsed": 5.694026947021484,
+    "stdout_size": 570
+  },
+  {
+    "song": "So What - Miles Davis",
+    "success": true,
+    "data": {
+      "description": "\"So What\" is the opening track of Miles Davis's landmark 1959 album *Kind of Blue*, the best-selling jazz album of all time. It is widely regarded as the definitive example of modal jazz, built on a simple two-chord AABA structure (D Dorian / E\u266d Dorian) that broke away from the complex chord changes of bebop and opened new improvisational possibilities. The recording features an iconic sextet including John Coltrane, Cannonball Adderley, Bill Evans, Paul Chambers, and Jimmy Cobb.",
+      "related_songs": [
+        "Freddie Freeloader",
+        "Impressions",
+        "Maiden Voyage"
+      ],
+      "tags": [
+        "modal jazz",
+        "cool jazz",
+        "1950s",
+        "Miles Davis",
+        "Kind of Blue"
+      ]
+    },
+    "elapsed": 7.222483158111572,
+    "stdout_size": 666
+  },
+  {
+    "song": "My Funny Valentine - Richard Rodgers",
+    "success": true,
+    "data": {
+      "description": "\"My Funny Valentine\" is a jazz standard composed by Richard Rodgers with lyrics by Lorenz Hart, written for the 1937 Broadway musical \"Babes in Arms.\" It became one of the most recorded jazz standards of all time, with iconic interpretations by Chet Baker, Miles Davis, and Frank Sinatra. The song's bittersweet lyrics and sophisticated harmonic structure\u2014built on a descending chromatic bass line in minor\u2014have made it a cornerstone of the jazz repertoire.",
+      "related_songs": [
+        "Bewitched, Bothered and Bewildered",
+        "Body and Soul",
+        "The Lady Is a Tramp"
+      ],
+      "tags": [
+        "jazz standard",
+        "ballad",
+        "Great American Songbook",
+        "1930s",
+        "vocal jazz",
+        "cool jazz"
+      ]
+    },
+    "elapsed": 7.02423620223999,
+    "stdout_size": 688
+  },
+  {
+    "song": "Stella By Starlight - Victor Young",
+    "success": true,
+    "data": {
+      "description": "\"Stella by Starlight\" was composed by Victor Young for the 1944 Paramount film \"The Uninvited,\" with lyrics later added by Ned Washington. Originally an instrumental theme, it became one of the most recorded jazz standards of all time, with landmark versions by Charlie Parker, Miles Davis, and Bill Evans. The song's sophisticated harmonic progression, moving through multiple key centers, has made it a essential vehicle for jazz improvisation.",
+      "related_songs": [
+        "Body and Soul",
+        "All the Things You Are",
+        "Cherokee"
+      ],
+      "tags": [
+        "jazz standard",
+        "ballad",
+        "Great American Songbook",
+        "1940s",
+        "film music",
+        "bebop"
+      ]
+    },
+    "elapsed": 7.618587017059326,
+    "stdout_size": 650
+  },
+  {
+    "song": "Giant Steps - John Coltrane",
+    "success": true,
+    "data": {
+      "description": "\"Giant Steps\" is a jazz composition by John Coltrane, first appearing on his landmark 1959 album of the same name. The piece is renowned for its rapidly moving harmonic progression based on three tonal centers separated by major thirds \u2014 a substitution pattern now known as \"Coltrane changes\" \u2014 which revolutionized jazz harmony and remains one of the most challenging standards for improvisers.",
+      "related_songs": [
+        "Countdown",
+        "Central Park West",
+        "Naima"
+      ],
+      "tags": [
+        "hard bop",
+        "post-bop",
+        "1950s",
+        "Coltrane changes",
+        "jazz standard"
+      ]
+    },
+    "elapsed": 7.822002172470093,
+    "stdout_size": 571
+  },
+  {
+    "song": "Round Midnight - Thelonious Monk",
+    "success": true,
+    "data": {
+      "description": "'Round Midnight is a jazz ballad composed by Thelonious Monk around 1936, making it one of the most recorded jazz standards of all time. First recorded by Cootie Williams in 1944, it gained iconic status through Miles Davis's 1956 recording on the album 'Round About Midnight, and has since been covered by countless artists. The hauntingly melancholic composition is widely regarded as Monk's masterpiece and a defining work of the bebop era.",
+      "related_songs": [
+        "Monk's Mood",
+        "Blue Monk",
+        "Ask Me Now"
+      ],
+      "tags": [
+        "bebop",
+        "ballad",
+        "1940s",
+        "jazz standard",
+        "piano jazz"
+      ]
+    },
+    "elapsed": 8.374419927597046,
+    "stdout_size": 603
+  }
+]

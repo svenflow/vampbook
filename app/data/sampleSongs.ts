@@ -45,12 +45,14 @@ export const sampleSongs: Song[] = [
   { id: 'tune-up', title: 'Tune Up', composer: 'Miles Davis', key: 'D', tempo: 'Medium Up', tags: ['bebop', 'hard-bop'] },
 ];
 
-// Group songs by first letter
+// Group songs by first letter (skipping leading punctuation)
 export function getSongsByLetter(): Map<string, Song[]> {
   const grouped = new Map<string, Song[]>();
 
   for (const song of sampleSongs) {
-    const letter = song.title[0].toUpperCase();
+    // Find first alphabetic character
+    const firstAlpha = song.title.match(/[A-Za-z]/);
+    const letter = firstAlpha ? firstAlpha[0].toUpperCase() : '#';
     const existing = grouped.get(letter) || [];
     existing.push(song);
     grouped.set(letter, existing);
