@@ -1,0 +1,303 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "pdf2image",
+#     "pillow",
+#     "click",
+# ]
+# ///
+"""
+VampBook CLI - Add fake books to the index
+
+Usage:
+    vampbook add book.pdf [--dry-run]
+
+Pipeline:
+1. Convert PDF pages to images
+2. Spawn Claude subprocess for extraction + enrichment
+3. Claude uses Gemini for vision tasks
+4. Output cropped PNGs + metadata JSON
+"""
+
+import click
+import json
+import os
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+from pdf2image import convert_from_path
+from PIL import Image
+
+# Project paths
+PROJECT_ROOT = Path(__file__).parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+SONGS_DIR = DATA_DIR / "songs"
+METADATA_DIR = DATA_DIR / "metadata"
+INDEX_FILE = DATA_DIR / "search_index.json"
+
+
+def ensure_dirs():
+    """Create data directories if needed."""
+    SONGS_DIR.mkdir(parents=True, exist_ok=True)
+    METADATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def pdf_to_images(pdf_path: Path, output_dir: Path) -> list[Path]:
+    """Convert PDF pages to PNG images."""
+    click.echo(f"Converting PDF to images...")
+    images = convert_from_path(pdf_path, dpi=150, fmt="png")
+
+    image_paths = []
+    for i, image in enumerate(images, 1):
+        path = output_dir / f"page_{i:03d}.png"
+        image.save(path, "PNG")
+        image_paths.append(path)
+        click.echo(f"  Page {i}/{len(images)}")
+
+    return image_paths
+
+
+def run_claude_extraction(image_paths: list[Path], book_name: str) -> dict:
+    """Run Claude subprocess for extraction and enrichment."""
+    click.echo(f"\nSpawning Claude for extraction...")
+
+    # Build the prompt with image paths
+    image_list = "\n".join(f"- {p}" for p in image_paths)
+
+    prompt = f'''You are extracting songs from a jazz fake book called "{book_name}".
+
+The following page images are from this book:
+{image_list}
+
+For EACH page, you must:
+1. Use Gemini Vision to analyze the image
+2. Detect all songs on the page (some pages have 2+ songs)
+3. For each song, extract:
+   - title
+   - composer (if shown)
+   - key signature
+   - tempo marking (if shown)
+   - form (like AABA, blues, etc - if determinable)
+   - crop coordinates (top, bottom as percentage of page height)
+
+4. Generate AI enrichment:
+   - description: 1-2 sentence description of the song
+   - related_songs: list of 3-5 similar jazz standards
+   - tags: list of 3-5 genre/style tags
+
+Output a JSON object with this structure:
+{{
+  "songs": [
+    {{
+      "id": "unique-slug-from-title",
+      "title": "Song Title",
+      "composer": "Composer Name",
+      "key": "C major",
+      "tempo": "Medium Swing",
+      "form": "AABA",
+      "page_in_book": 1,
+      "crop_top": 0.0,
+      "crop_bottom": 0.5,
+      "description": "A classic bebop tune...",
+      "related_songs": ["similar-song-1", "similar-song-2"],
+      "tags": ["bebop", "uptempo", "1950s"]
+    }}
+  ]
+}}
+
+IMPORTANT:
+- Hard fail if you cannot read a page - do not guess
+- Crop coordinates are percentages (0.0 = top, 1.0 = bottom)
+- Generate unique IDs from title (lowercase, hyphens, no special chars)
+- Include page_in_book for each song
+
+Output ONLY the JSON, no markdown code blocks.'''
+
+    # Run Claude with -p flag for non-interactive
+    result = subprocess.run(
+        ["claude", "-p", prompt, "--dangerously-skip-permissions"],
+        capture_output=True,
+        text=True,
+        timeout=600  # 10 minute timeout for large books
+    )
+
+    if result.returncode != 0:
+        click.echo(f"Claude failed with exit code {result.returncode}", err=True)
+        click.echo(result.stderr, err=True)
+        sys.exit(1)
+
+    # Parse JSON from output
+    try:
+        # Find JSON in output (Claude might add some preamble)
+        output = result.stdout.strip()
+        json_start = output.find('{')
+        json_end = output.rfind('}') + 1
+        if json_start == -1 or json_end == 0:
+            raise ValueError("No JSON found in output")
+
+        return json.loads(output[json_start:json_end])
+    except (json.JSONDecodeError, ValueError) as e:
+        click.echo(f"Failed to parse Claude output: {e}", err=True)
+        click.echo(f"Raw output:\n{result.stdout[:500]}...", err=True)
+        sys.exit(1)
+
+
+def crop_and_save_songs(image_paths: list[Path], songs: list[dict]) -> None:
+    """Crop song regions from page images and save as PNGs."""
+    click.echo(f"\nCropping {len(songs)} songs...")
+
+    for song in songs:
+        page_idx = song["page_in_book"] - 1  # Convert to 0-indexed
+        if page_idx >= len(image_paths):
+            click.echo(f"  Warning: Page {song['page_in_book']} not found for {song['title']}", err=True)
+            continue
+
+        img = Image.open(image_paths[page_idx])
+        width, height = img.size
+
+        top = int(height * song["crop_top"])
+        bottom = int(height * song["crop_bottom"])
+
+        cropped = img.crop((0, top, width, bottom))
+
+        output_path = SONGS_DIR / f"{song['id']}.png"
+        cropped.save(output_path, "PNG", optimize=True)
+
+        click.echo(f"  {song['id']}.png ({output_path.stat().st_size // 1024}KB)")
+
+
+def save_metadata(songs: list[dict], book_name: str) -> None:
+    """Save individual metadata files and update search index."""
+    click.echo(f"\nSaving metadata...")
+
+    for song in songs:
+        metadata = {
+            "id": song["id"],
+            "title": song["title"],
+            "composer": song.get("composer", "Unknown"),
+            "key": song.get("key", ""),
+            "tempo": song.get("tempo", ""),
+            "form": song.get("form", ""),
+            "year": song.get("year"),
+            "page_in_book": song["page_in_book"],
+            "source_book": book_name,
+            "description": song.get("description", ""),
+            "related_songs": song.get("related_songs", []),
+            "tags": song.get("tags", []),
+        }
+
+        output_path = METADATA_DIR / f"{song['id']}.json"
+        with open(output_path, 'w') as f:
+            json.dump(metadata, f, indent=2)
+
+    # Update search index
+    click.echo("Updating search index...")
+
+    # Load existing index or create new
+    if INDEX_FILE.exists():
+        with open(INDEX_FILE) as f:
+            index = json.load(f)
+    else:
+        index = {"songs": []}
+
+    # Add new songs to index
+    existing_ids = {s["id"] for s in index["songs"]}
+
+    for song in songs:
+        if song["id"] in existing_ids:
+            continue  # Skip duplicates
+
+        # Build search text
+        search_parts = [
+            song["title"],
+            song.get("composer", ""),
+            song.get("key", ""),
+            " ".join(song.get("tags", [])),
+        ]
+        search_text = " ".join(p for p in search_parts if p).lower()
+
+        index["songs"].append({
+            "id": song["id"],
+            "title": song["title"],
+            "composer": song.get("composer", "Unknown"),
+            "search_text": search_text,
+        })
+
+    # Sort by title
+    index["songs"].sort(key=lambda s: s["title"].lower())
+
+    with open(INDEX_FILE, 'w') as f:
+        json.dump(index, f, indent=2)
+
+    click.echo(f"  Index now has {len(index['songs'])} songs")
+
+
+@click.group()
+def cli():
+    """VampBook CLI - Manage fake book index."""
+    pass
+
+
+@cli.command()
+@click.argument("pdf_path", type=click.Path(exists=True, path_type=Path))
+@click.option("--dry-run", is_flag=True, help="Show what would be done without doing it")
+def add(pdf_path: Path, dry_run: bool):
+    """Add a fake book PDF to the index."""
+    ensure_dirs()
+
+    book_name = pdf_path.stem
+    click.echo(f"Processing: {book_name}")
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+
+        # Step 1: Convert PDF to images
+        image_paths = pdf_to_images(pdf_path, tmpdir)
+        click.echo(f"Converted {len(image_paths)} pages")
+
+        if dry_run:
+            click.echo("\n[DRY RUN] Would run Claude extraction on these pages")
+            return
+
+        # Step 2: Run Claude extraction
+        result = run_claude_extraction(image_paths, book_name)
+        songs = result.get("songs", [])
+
+        if not songs:
+            click.echo("No songs found!", err=True)
+            sys.exit(1)
+
+        click.echo(f"Found {len(songs)} songs")
+
+        # Step 3: Crop and save PNGs
+        crop_and_save_songs(image_paths, songs)
+
+        # Step 4: Save metadata
+        save_metadata(songs, book_name)
+
+    click.echo(f"\nDone! Added {len(songs)} songs from {book_name}")
+
+
+@cli.command()
+def status():
+    """Show index status."""
+    if not INDEX_FILE.exists():
+        click.echo("No index found. Run 'vampbook add <pdf>' to get started.")
+        return
+
+    with open(INDEX_FILE) as f:
+        index = json.load(f)
+
+    songs = index.get("songs", [])
+    click.echo(f"Songs indexed: {len(songs)}")
+
+    if songs:
+        click.echo("\nRecent additions:")
+        for song in songs[-5:]:
+            click.echo(f"  - {song['title']} ({song['composer']})")
+
+
+if __name__ == "__main__":
+    cli()
