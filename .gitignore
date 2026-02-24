@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.expo/
+
+# Build outputs
+ios/build/
+android/build/
+*.xcarchive
+
+# Editor
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test outputs
+/tmp/
